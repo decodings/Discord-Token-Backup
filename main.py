@@ -64,8 +64,7 @@ class Main:
         allowed_channel_types = [0, 2, 3, 5, 13]
         for guild in self.session.get('https://discord.com/api/v9/users/@me/guilds').json():
             if 'VANITY_URL' in guild['features']:
-                response = self.session.get('https://discord.com/api/v9/guilds/%s' % guild['id'])
-                invite = response.json()['vanity_url_code']
+                invite = self.session.get('https://discord.com/api/v9/guilds/%s' % guild['id']).json()['vanity_url_code']
                 print('Created invite for: %s | %s' % (guild['name'], invite))
                 time.sleep(1)
             else:
