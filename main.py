@@ -119,6 +119,7 @@ class Main:
 
     def backup_dms(self):
         for id in self.dm_backup_whitelist:
+            print('Started DM backup with: %s' % id)
             channel_id = self.get_channel(id)
             pins_list = []
             attachments_list = []
