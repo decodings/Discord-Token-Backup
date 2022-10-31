@@ -11,7 +11,7 @@ class Main:
         self.token = token
         self.session = self.create_session()
         self.path = '' # For VSC users that use folders (Ex: Folder/)
-        self.dm_backup_whitelist = dm_backup_whitelist # IDs of users you want to backup DMs with.
+        self.dm_backup_whitelist = dm_backup_whitelist
 
     def get_cookie(self):
         cookie = str(requests.get('https://discord.com/app').cookies)
