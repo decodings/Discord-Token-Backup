@@ -2,6 +2,7 @@
 
 ### Features:
 - [x] Friend backup
+- [x] Note backup
 - [x] Server backup
 - [x] Group chat backup
 - [x] DM backup (All messages, pins and attachments.)
