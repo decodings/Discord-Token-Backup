@@ -5,8 +5,7 @@
 - [x] Note backup (Friends)
 - [x] Server backup
 - [x] Group chat backup
-- [x] DM backup (All messages, pins and attachments.)
-^ ADDING MESSAGE AMOUNT CAP TOMORROW
+- [x] DM backup (All messages, pins and attachments.) - ADDING MESSAGE AMOUNT CAP TOMORROW
 
 ### How to Use DM Backup:
 1. On line 2 set backup_dms to True.
