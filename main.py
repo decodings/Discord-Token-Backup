@@ -1,14 +1,17 @@
-token = ''
+token = '' # Your account's token
+backup_dms = True # False/True
+dm_backup_whitelist = [] # IDs of users you want to backup DMs with.
 
 #
 
-import requests, time
+import requests, time, datetime
 
 class Main:
     def __init__(self):
         self.token = token
         self.session = self.create_session()
         self.path = '' # For VSC users that use folders (Ex: Folder/)
+        self.dm_backup_whitelist = dm_backup_whitelist # IDs of users you want to backup DMs with.
 
     def get_cookie(self):
         cookie = str(requests.get('https://discord.com/app').cookies)
@@ -36,11 +39,18 @@ class Main:
 
     def backup_relationships(self):
         for user in self.session.get('https://discord.com/api/v9/users/@me/relationships').json():
-            with open('%srelationships.txt' % self.path, 'a', encoding = 'UTF-8') as file:
-                username = user['user']['username']
-                discriminator = user['user']['discriminator']
-                file.write('%s#%s | %s\n' % (username, discriminator, user['id']))
-                print('Saved friend: %s#%s' % (username, discriminator))
+            username = user['user']['username']
+            discriminator = user['user']['discriminator']
+            tag = '%s#%s' % (username, discriminator)
+            response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
+            if response:
+                note = response.json()['note']
+                print('Saved note for: %s' % tag)
+            else:
+                note = 'None'
+            with open('%srelationships.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
+                file.write('%s | Note: %s | %s\n' % (tag, note.replace('\n', '\\n'), user['id']))
+                print('Saved friend: %s' % tag)
 
     def backup_group_chats(self):
         for channel in self.session.get('https://discord.com/api/v9/users/@me/channels').json():
@@ -57,7 +67,7 @@ class Main:
                     recipients = ', '.join(recipients)
                     print('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
-                    with open('%sguilds.txt' % self.path, 'a', encoding = 'UTF-8') as file:
+                    with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                         file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
 
     def backup_guilds(self):
@@ -98,11 +108,59 @@ class Main:
                             invite = 'None'
                             print('Couldn\'t create invite for: %s.' % guild['name'])
                             time.sleep(1)
-            with open('%sguilds.txt' % self.path, 'a', encoding = 'UTF-8') as file:
+            with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                 file.write('%s | %s | %s\n' % (guild['name'], guild['id'], invite))
+
+    def get_channel(self, id):
+        json = {
+            'recipients': [id]
+        }
+        return self.session.post('https://discord.com/api/v9/users/@me/channels', json = json).json()['id']
+
+    def backup_dms(self):
+        for id in self.dm_backup_whitelist:
+            channel_id = self.get_channel(id)
+            pins_list = []
+            attachments_list = []
+            messages_list = []
+            messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?limit=100' % channel_id)
+            while len(messages.json()) > 0:
+                for message in messages.json():
+                    date = datetime.datetime.fromisoformat(message['timestamp']).strftime('%Y-%m-%d | %H:%M %p')
+                    if message['attachments']:
+                        for attachment in message['attachments']:
+                            attachments_list.append('Attachment name: %s | Attachment URL: %s' % (attachment['filename'], attachment['url']))
+                        content = '(%s) %s#%s: %s | Attachments: %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'], ', '.join(attachments_list))
+                    else:
+                        content = '(%s) %s#%s: %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'])
+                    messages_list.append(content)
+                    if message['pinned']:
+                        pins_list.append(content)
+                messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channel_id, messages.json()[-1]['id']))
+                if message['author']['id'] == str(id):
+                    tag = '%s#%s' % (message['author']['username'], message['author']['discriminator'])
+            with open('%sDMs/%s.txt' % (self.path, id), 'a+', encoding = 'UTF-8') as file:
+                if tag:
+                    pass
+                else:
+                    tag = 'None'
+                file.write('DM with: %s (ID: %s)\n\n' % (tag, id))
+                file.write('Statistics: All: %s, Pinned: %s, Attachments: %s\n\n' % (len(messages_list), len(pins_list), len(attachments_list)))
+                file.write('--- PINNED MESSAGES --- (Total: %s)\n\n' % len(pins_list))
+                for message in pins_list:
+                    file.write('%s\n' % message)
+                file.write('\n--- ATTACHMENTS --- (Total: %s)\n\n' % len(attachments_list))
+                for message in attachments_list:
+                    file.write('%s\n' % message)
+                file.write('\n--- ALL MESSAGES --- (Total: %s)\n\n' % len(messages_list))
+                for message in messages_list:
+                    file.write('%s\n' % message)
+            print('Backed up %s messages, %s pins, %s attachments with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
 
     def run(self):
         self.backup_relationships()
+        if backup_dms:
+            self.backup_dms()
         self.backup_group_chats()
         self.backup_guilds()
 
