@@ -9,4 +9,4 @@
 
 ### How to Use DM/group chat Backup:
 1. On line 2 set backup_dms to True.
-2. - Add IDs of users/group chat channels you want to backup in the list on line 3.
+2. Add IDs of users/group chat channels you want to backup in the list on line 3.
