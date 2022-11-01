@@ -14,4 +14,3 @@ To backup specific friends/group chats, add IDs of users/group chats in the list
 ### Showcase:
 ![image](https://user-images.githubusercontent.com/109295864/199278928-f203aeca-8a76-4015-89b3-f7d15f9e7a6b.png)
 ![image](https://user-images.githubusercontent.com/109295864/199279337-8c13f949-7bde-4d49-b7d3-05dc625a3de1.png)
-![image](https://user-images.githubusercontent.com/109295864/199279464-69cb52a2-9a77-4fbf-b95a-2cbb34ea339b.png)
