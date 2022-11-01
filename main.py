@@ -1,5 +1,5 @@
 token = '' # Your account's token
-backup_dms = True # False/True
+backup_dms = False # False/True
 dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
 
 #
@@ -158,7 +158,7 @@ class Main:
                         tag = '%s#%s' % (message['author']['username'], message['author']['discriminator'])
                 messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channel_id, messages.json()[-1]['id']))
             with open('%sDMs/%s.txt' % (self.path, id), 'a+', encoding = 'UTF-8') as file:
-                file.write('DM with: %s (ID: %s)\n\n' % (tag, id))
+                file.write('DMs with: %s (ID: %s)\n\n' % (tag, id))
                 file.write('Statistics: All: %s, Pinned: %s, Attachments: %s\n\n' % (len(messages_list), len(pins_list), len(attachments_list)))
                 file.write('--- PINNED MESSAGE(S) --- (Total: %s)\n\n' % len(pins_list))
                 for message in pins_list:
