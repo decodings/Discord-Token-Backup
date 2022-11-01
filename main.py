@@ -144,7 +144,14 @@ class Main:
         return self.session.post('https://discord.com/api/v9/users/@me/channels', json = json).json()['id']
 
     def backup_dms(self):
-        for id in self.dm_backup_whitelist:
+        if self.dm_backup_whitelist:
+            ids = self.dm_backup_whitelist
+        else:
+            ids = []
+            for user in self.session.get('https://discord.com/api/v9/users/@me/relationships').json():
+                if user['type'] == 1 or user['type'] == 4:
+                    ids.append(int(user['id']))
+        for id in ids:
             time.sleep(1)
             printf('Started DM/GC backup with: %s' % id)
             try:
@@ -173,7 +180,7 @@ class Main:
                     if message['author']['id'] == str(id):
                         tag = '%s#%s' % (message['author']['username'], message['author']['discriminator'])
                 messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channel_id, messages.json()[-1]['id']))
-            with open('%sDMs/%s.txt' % (self.path, id), 'a+', encoding = 'UTF-8') as file:
+            with open('%sDMs/%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
                 file.write('DMs with: %s (ID: %s)\n\n' % (tag, id))
                 file.write('Statistics: All: %s, Pinned: %s, Attachments: %s\n\n' % (len(messages_list), len(pins_list), len(attachments_list)))
                 file.write('--- PINNED MESSAGE(S) --- (Total: %s)\n\n' % len(pins_list))
