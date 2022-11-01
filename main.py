@@ -7,7 +7,7 @@ dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
 import requests, time, datetime
 
 def printf(input):
-    return '\x1b[1m\x1b[38;5;33m%s' % input
+    print('\x1b[1m\x1b[38;5;33m%s' % input)
 
 class Main:
     def __init__(self):
