@@ -79,6 +79,19 @@ class Main:
                     time.sleep(1)
                     with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                         file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
+                else:
+                    retry_after = response.json()['retry_after']
+                    print('Rate limmited, sleeping for: %s' % retry_after)
+                    time.sleep(retry_after + 1)
+                    invite = response.json()['code']
+                    recipients = []
+                    for user in channel['recipients']:
+                        recipients.append(user['username'])
+                    recipients = ', '.join(recipients)
+                    print('Created invite for group chat: %s | %s' % (recipients, invite))
+                    time.sleep(1)
+                    with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
+                        file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
 
     def backup_guilds(self):
         allowed_channel_types = [0, 2, 3, 5, 13]
