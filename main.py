@@ -1,13 +1,15 @@
 token = '' # Your account's token
 backup_dms = False # False/True
-dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
+dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with. (Leave blank to backup all friends.)
 
 #
 
-import requests, time, datetime
+import requests, time, datetime, itertools
 
-def printf(input):
-    print('\x1b[1m\x1b[38;5;33m%s' % input)
+colors_pool = itertools.cycle(['\x1b[38;5;129m', '\x1b[38;5;129m', '\x1b[38;5;135m', '\x1b[38;5;99m', '\x1b[38;5;99m', '\x1b[38;5;99m', '\x1b[38;5;99m', '\x1b[38;5;63m', '\x1b[38;5;63m', '\x1b[38;5;63m', '\x1b[38;5;63m', '\x1b[38;5;69m', '\x1b[38;5;69m', '\x1b[38;5;69m', '\x1b[38;5;33m', '\x1b[38;5;33m', '\x1b[38;5;69m', '\x1b[38;5;74m', '\x1b[38;5;74m', '\x1b[38;5;73m', '\x1b[38;5;73m', '\x1b[38;5;73m', '\x1b[38;5;78m', '\x1b[38;5;114m', '\x1b[38;5;114m', '\x1b[38;5;113m', '\x1b[38;5;113m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;191m', '\x1b[38;5;191m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;215m', '\x1b[38;5;215m', '\x1b[38;5;215m', '\x1b[38;5;209m', '\x1b[38;5;209m', '\x1b[38;5;209m', '\x1b[38;5;203m', '\x1b[38;5;203m', '\x1b[38;5;203m', '\x1b[38;5;204m', '\x1b[38;5;204m', '\x1b[38;5;204m', '\x1b[38;5;198m', '\x1b[38;5;198m'])
+
+def cout(input):
+    print('%s%s' % (next(colors_pool), input))
 
 class Main:
     def __init__(self):
@@ -48,22 +50,22 @@ class Main:
             response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
             if response:
                 note = response.json()['note']
-                printf('Saved note for: %s' % tag)
+                cout('Saved note for: %s' % tag)
             elif response.status_code == 429:
                 retry_after = response.json()['retry_after']
-                printf('Rate limited, sleeping for: %s' % retry_after)
+                cout('Rate limited, sleeping for: %s' % retry_after)
                 time.sleep(retry_after + 1)
                 response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
                 if response:
                     note = response.json()['note']
-                    printf('Saved note for: %s' % tag)
+                    cout('Saved note for: %s' % tag)
                 else:
                     note = 'None'
             else:
                 note = 'None'
             with open('%srelationships.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                 file.write('%s | Note: %s | %s\n' % (tag, note.replace('\n', '\\n'), user['id']))
-                printf('Saved friend: %s' % tag)
+                cout('Saved friend: %s' % tag)
 
     def backup_group_chats(self):
         for channel in self.session.get('https://discord.com/api/v9/users/@me/channels').json():
@@ -78,20 +80,20 @@ class Main:
                     for user in channel['recipients']:
                         recipients.append(user['username'])
                     recipients = ', '.join(recipients)
-                    printf('Created invite for group chat: %s | %s' % (recipients, invite))
+                    cout('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
                     with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                         file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
                 else:
                     retry_after = response.json()['retry_after']
-                    printf('Rate limmited, sleeping for: %s' % retry_after)
+                    cout('Rate limmited, sleeping for: %s' % retry_after)
                     time.sleep(retry_after + 1)
                     invite = response.json()['code']
                     recipients = []
                     for user in channel['recipients']:
                         recipients.append(user['username'])
                     recipients = ', '.join(recipients)
-                    printf('Created invite for group chat: %s | %s' % (recipients, invite))
+                    cout('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
                     with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                         file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
@@ -101,7 +103,7 @@ class Main:
         for guild in self.session.get('https://discord.com/api/v9/users/@me/guilds').json():
             if 'VANITY_URL' in guild['features']:
                 invite = self.session.get('https://discord.com/api/v9/guilds/%s' % guild['id']).json()['vanity_url_code']
-                printf('Created invite for: %s | %s' % (guild['name'], invite))
+                cout('Created invite for: %s | %s' % (guild['name'], invite))
                 time.sleep(1)
             else:
                 for channel in self.session.get('https://discord.com/api/v9/guilds/%s/channels' % guild['id']).json():
@@ -114,25 +116,25 @@ class Main:
                         response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                         if response.status_code == 200:
                             invite = response.json()['code']
-                            printf('Created invite for: %s | %s.' % (guild['name'], invite))
+                            cout('Created invite for: %s | %s.' % (guild['name'], invite))
                             time.sleep(1)
                             break
                         elif response.status_code == 429:
-                            printf('Rate limited, sleeping for: %s seconds.' % response.json()['retry_after'])
+                            cout('Rate limited, sleeping for: %s seconds.' % response.json()['retry_after'])
                             time.sleep(response.json()['retry_after'] + 1)
                             response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                             if response.status_code == 200:
                                 invite = response.json()['code']
-                                printf('Created invite for: %s | %s.' % (guild['name'], invite))
+                                cout('Created invite for: %s | %s.' % (guild['name'], invite))
                                 time.sleep(1)
                                 break
                             else:
                                 invite = 'None'
-                                printf('Couldn\'t create invite for: %s.' % guild['name'])
+                                cout('Couldn\'t create invite for: %s.' % guild['name'])
                                 time.sleep(1)
                         else:
                             invite = 'None'
-                            printf('Couldn\'t create invite for: %s.' % guild['name'])
+                            cout('Couldn\'t create invite for: %s.' % guild['name'])
                             time.sleep(1)
             with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                 file.write('%s | %s | %s\n' % (guild['name'], guild['id'], invite))
@@ -153,7 +155,7 @@ class Main:
                     ids.append(int(user['id']))
         for id in ids:
             time.sleep(1)
-            printf('Started DM/GC backup with: %s' % id)
+            cout('Started DM/GC backup with: %s' % id)
             try:
                 channel_id = self.get_channel(id)
             except:
@@ -192,7 +194,7 @@ class Main:
                 file.write('\n--- ALL MESSAGE(S) --- (Total: %s)\n\n' % len(messages_list))
                 for message in messages_list:
                     file.write('%s\n' % message)
-            printf('Backed up %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
+            cout('Backed up %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
 
     def run(self):
         self.backup_relationships()
