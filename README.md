@@ -1,4 +1,4 @@
-> Works as of October 31, 2022
+> Works as of November 1, 2022
 
 ### Features:
 - [x] Friend backup
