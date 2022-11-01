@@ -1,6 +1,6 @@
 token = '' # Your account's token
 backup_dms = True # False/True
-dm_backup_whitelist = [] # IDs of users you want to backup DMs with.
+dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
 
 #
 
@@ -46,6 +46,16 @@ class Main:
             if response:
                 note = response.json()['note']
                 print('Saved note for: %s' % tag)
+            elif response.status_code == 429:
+                retry_after = response.json()['retry_after']
+                print('Rate limited, sleeping for: %s' % retry_after)
+                time.sleep(retry_after + 1)
+                response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
+                if response:
+                    note = response.json()['note']
+                    print('Saved note for: %s' % tag)
+                else:
+                    note = 'None'
             else:
                 note = 'None'
             with open('%srelationships.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
@@ -93,7 +103,7 @@ class Main:
                             break
                         elif response.status_code == 429:
                             print('Rate limited, sleeping for: %s seconds.' % response.json()['retry_after'])
-                            time.sleep(response.json()['retry_after'])
+                            time.sleep(response.json()['retry_after'] + 1)
                             response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                             if response.status_code == 200:
                                 invite = response.json()['code']
@@ -119,44 +129,47 @@ class Main:
 
     def backup_dms(self):
         for id in self.dm_backup_whitelist:
-            print('Started DM backup with: %s' % id)
-            channel_id = self.get_channel(id)
+            time.sleep(1)
+            print('Started DM/GC backup with: %s' % id)
+            try:
+                channel_id = self.get_channel(id)
+            except:
+                channel_id = id
             pins_list = []
             attachments_list = []
             messages_list = []
             messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?limit=100' % channel_id)
+            tag = 'None'
             while len(messages.json()) > 0:
                 for message in messages.json():
                     date = datetime.datetime.fromisoformat(message['timestamp']).strftime('%Y-%m-%d | %H:%M %p')
                     if message['attachments']:
+                        _attachments_list = []
                         for attachment in message['attachments']:
                             attachments_list.append('Attachment name: %s | Attachment URL: %s' % (attachment['filename'], attachment['url']))
-                        content = '(%s) %s#%s: %s | Attachments: %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'], ', '.join(attachments_list))
+                            _attachments_list.append('Attachment name: %s | Attachment URL: %s' % (attachment['filename'], attachment['url']))
+                        content = '(%s) %s#%s: %s | Attachment(s): %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'], ', '.join(_attachments_list))
                     else:
                         content = '(%s) %s#%s: %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'])
                     messages_list.append(content)
                     if message['pinned']:
                         pins_list.append(content)
+                    if message['author']['id'] == str(id):
+                        tag = '%s#%s' % (message['author']['username'], message['author']['discriminator'])
                 messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channel_id, messages.json()[-1]['id']))
-                if message['author']['id'] == str(id):
-                    tag = '%s#%s' % (message['author']['username'], message['author']['discriminator'])
             with open('%sDMs/%s.txt' % (self.path, id), 'a+', encoding = 'UTF-8') as file:
-                if tag:
-                    pass
-                else:
-                    tag = 'None'
                 file.write('DM with: %s (ID: %s)\n\n' % (tag, id))
                 file.write('Statistics: All: %s, Pinned: %s, Attachments: %s\n\n' % (len(messages_list), len(pins_list), len(attachments_list)))
-                file.write('--- PINNED MESSAGES --- (Total: %s)\n\n' % len(pins_list))
+                file.write('--- PINNED MESSAGE(S) --- (Total: %s)\n\n' % len(pins_list))
                 for message in pins_list:
                     file.write('%s\n' % message)
-                file.write('\n--- ATTACHMENTS --- (Total: %s)\n\n' % len(attachments_list))
+                file.write('\n--- ATTACHMENT(S) --- (Total: %s)\n\n' % len(attachments_list))
                 for message in attachments_list:
                     file.write('%s\n' % message)
-                file.write('\n--- ALL MESSAGES --- (Total: %s)\n\n' % len(messages_list))
+                file.write('\n--- ALL MESSAGE(S) --- (Total: %s)\n\n' % len(messages_list))
                 for message in messages_list:
                     file.write('%s\n' % message)
-            print('Backed up %s messages, %s pins, %s attachments with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
+            print('Backed up %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
 
     def run(self):
         self.backup_relationships()
