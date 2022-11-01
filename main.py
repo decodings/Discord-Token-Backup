@@ -6,6 +6,9 @@ dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
 
 import requests, time, datetime
 
+def printf(input):
+    return '\x1b[1m\x1b[38;5;33m%s' % input
+
 class Main:
     def __init__(self):
         self.token = token
@@ -45,22 +48,22 @@ class Main:
             response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
             if response:
                 note = response.json()['note']
-                print('Saved note for: %s' % tag)
+                printf('Saved note for: %s' % tag)
             elif response.status_code == 429:
                 retry_after = response.json()['retry_after']
-                print('Rate limited, sleeping for: %s' % retry_after)
+                printf('Rate limited, sleeping for: %s' % retry_after)
                 time.sleep(retry_after + 1)
                 response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
                 if response:
                     note = response.json()['note']
-                    print('Saved note for: %s' % tag)
+                    printf('Saved note for: %s' % tag)
                 else:
                     note = 'None'
             else:
                 note = 'None'
             with open('%srelationships.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                 file.write('%s | Note: %s | %s\n' % (tag, note.replace('\n', '\\n'), user['id']))
-                print('Saved friend: %s' % tag)
+                printf('Saved friend: %s' % tag)
 
     def backup_group_chats(self):
         for channel in self.session.get('https://discord.com/api/v9/users/@me/channels').json():
@@ -75,20 +78,20 @@ class Main:
                     for user in channel['recipients']:
                         recipients.append(user['username'])
                     recipients = ', '.join(recipients)
-                    print('Created invite for group chat: %s | %s' % (recipients, invite))
+                    printf('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
                     with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                         file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
                 else:
                     retry_after = response.json()['retry_after']
-                    print('Rate limmited, sleeping for: %s' % retry_after)
+                    printf('Rate limmited, sleeping for: %s' % retry_after)
                     time.sleep(retry_after + 1)
                     invite = response.json()['code']
                     recipients = []
                     for user in channel['recipients']:
                         recipients.append(user['username'])
                     recipients = ', '.join(recipients)
-                    print('Created invite for group chat: %s | %s' % (recipients, invite))
+                    printf('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
                     with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                         file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
@@ -98,7 +101,7 @@ class Main:
         for guild in self.session.get('https://discord.com/api/v9/users/@me/guilds').json():
             if 'VANITY_URL' in guild['features']:
                 invite = self.session.get('https://discord.com/api/v9/guilds/%s' % guild['id']).json()['vanity_url_code']
-                print('Created invite for: %s | %s' % (guild['name'], invite))
+                printf('Created invite for: %s | %s' % (guild['name'], invite))
                 time.sleep(1)
             else:
                 for channel in self.session.get('https://discord.com/api/v9/guilds/%s/channels' % guild['id']).json():
@@ -111,25 +114,25 @@ class Main:
                         response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                         if response.status_code == 200:
                             invite = response.json()['code']
-                            print('Created invite for: %s | %s.' % (guild['name'], invite))
+                            printf('Created invite for: %s | %s.' % (guild['name'], invite))
                             time.sleep(1)
                             break
                         elif response.status_code == 429:
-                            print('Rate limited, sleeping for: %s seconds.' % response.json()['retry_after'])
+                            printf('Rate limited, sleeping for: %s seconds.' % response.json()['retry_after'])
                             time.sleep(response.json()['retry_after'] + 1)
                             response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                             if response.status_code == 200:
                                 invite = response.json()['code']
-                                print('Created invite for: %s | %s.' % (guild['name'], invite))
+                                printf('Created invite for: %s | %s.' % (guild['name'], invite))
                                 time.sleep(1)
                                 break
                             else:
                                 invite = 'None'
-                                print('Couldn\'t create invite for: %s.' % guild['name'])
+                                printf('Couldn\'t create invite for: %s.' % guild['name'])
                                 time.sleep(1)
                         else:
                             invite = 'None'
-                            print('Couldn\'t create invite for: %s.' % guild['name'])
+                            printf('Couldn\'t create invite for: %s.' % guild['name'])
                             time.sleep(1)
             with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                 file.write('%s | %s | %s\n' % (guild['name'], guild['id'], invite))
@@ -143,7 +146,7 @@ class Main:
     def backup_dms(self):
         for id in self.dm_backup_whitelist:
             time.sleep(1)
-            print('Started DM/GC backup with: %s' % id)
+            printf('Started DM/GC backup with: %s' % id)
             try:
                 channel_id = self.get_channel(id)
             except:
@@ -182,7 +185,7 @@ class Main:
                 file.write('\n--- ALL MESSAGE(S) --- (Total: %s)\n\n' % len(messages_list))
                 for message in messages_list:
                     file.write('%s\n' % message)
-            print('Backed up %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
+            printf('Backed up %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
 
     def run(self):
         self.backup_relationships()
