@@ -2,13 +2,11 @@
 
 ### Features:
 - [x] Friend backup
-- [x] Note backup (Friends)
-- [x] Server invites backup
-- [x] Group chat invites backup
-- [x] DM backup (All messages, pins and attachments.) - ADDING MESSAGE AMOUNT CAP IN A BIT
-- [x] Group chat history backup (All messages, pins and attachments.) - ADDING MESSAGE AMOUNT CAP IN A BIT
+- [x] Note backup
+- [x] Server backup
+- [x] Group chat backup
+- [x] History backup for DMs & group chats (All messages, pins and attachments.) (Average speed: 30 seconds per 10K messages.)
 
-### How to Use DM/Group Chat Backup:
+### How to Use DM/group chat Backup:
 1. On line 2 set backup_dms to True.
-2. - For DMs: Add IDs of users who's DMs you want to backup in the list on line 3.
-3. - For group chats: Add IDs of group chats you want to backup in the list on line 3.
+2. - Add IDs of users/group chat channels you want to backup in the list on line 3.
