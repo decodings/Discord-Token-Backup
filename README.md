@@ -12,6 +12,9 @@ To backup all friends, leave the list on line 3 empty.
 To backup specific friends/group chats, add IDs of users/group chats in the list on line 3.
 
 ### Showcase:
-![image](https://user-images.githubusercontent.com/109295864/199513401-f7acf17c-caf4-4e5b-b12a-d06410733a41.png)
-![image](https://user-images.githubusercontent.com/109295864/199513451-20d0cd17-47a8-4ea0-b797-d903613bf7b0.png)
-![image](https://user-images.githubusercontent.com/109295864/199513486-132f7994-11ea-4620-9b89-d2908e6faf20.png)
+![image](https://user-images.githubusercontent.com/109295864/199516750-d7e42b07-fb68-4db5-ab64-d16057c51c1d.png)
+![image](https://user-images.githubusercontent.com/109295864/199516632-14dc7b93-6c51-452f-89aa-56f4d8a2a44b.png)
+![image](https://user-images.githubusercontent.com/109295864/199516695-a70fe22c-54b6-4821-97d5-3a076522f44a.png)
+![image](https://user-images.githubusercontent.com/109295864/199516405-9d67a788-b31e-4a63-a553-ff0441ff7b7b.png)
+RGB logging too :D
+![image](https://user-images.githubusercontent.com/109295864/199516879-2d4356c1-7c6f-4461-b5b9-e530fb285a02.png)
