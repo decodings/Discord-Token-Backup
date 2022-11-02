@@ -43,6 +43,9 @@ class Main:
         return session
 
     def backup_relationships(self):
+        open('%srelationships.txt' % self.path, 'w+', encoding = 'UTF-8').close()
+        with open('%srelationships.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
+            file.write('Date: %s\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
         for user in self.session.get('https://discord.com/api/v9/users/@me/relationships').json():
             username = user['user']['username']
             discriminator = user['user']['discriminator']
@@ -68,6 +71,9 @@ class Main:
                 cout('Saved friend: %s' % tag)
 
     def backup_group_chats(self):
+        open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8').close()
+        with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
+            file.write('Date: %s\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
         for channel in self.session.get('https://discord.com/api/v9/users/@me/channels').json():
             if channel['type'] == 3:
                 json = {
