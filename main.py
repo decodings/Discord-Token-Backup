@@ -6,10 +6,10 @@ dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
 
 import requests, time, datetime, itertools
 
-colors_pool = itertools.cycle(['\x1b[38;5;33m', '\x1b[38;5;33m', '\x1b[38;5;69m', '\x1b[38;5;74m', '\x1b[38;5;74m', '\x1b[38;5;73m', '\x1b[38;5;73m', '\x1b[38;5;73m', '\x1b[38;5;78m', '\x1b[38;5;114m', '\x1b[38;5;114m', '\x1b[38;5;113m', '\x1b[38;5;113m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;155m', '\x1b[38;5;191m', '\x1b[38;5;191m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;185m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;221m', '\x1b[38;5;215m', '\x1b[38;5;215m', '\x1b[38;5;215m', '\x1b[38;5;209m', '\x1b[38;5;209m', '\x1b[38;5;209m', '\x1b[38;5;203m', '\x1b[38;5;203m', '\x1b[38;5;203m', '\x1b[38;5;204m', '\x1b[38;5;204m', '\x1b[38;5;204m', '\x1b[38;5;198m', '\x1b[38;5;198m', '\x1b[38;5;129m', '\x1b[38;5;129m', '\x1b[38;5;135m', '\x1b[38;5;99m', '\x1b[38;5;99m', '\x1b[38;5;99m', '\x1b[38;5;99m', '\x1b[38;5;63m', '\x1b[38;5;63m', '\x1b[38;5;63m', '\x1b[38;5;63m', '\x1b[38;5;69m', '\x1b[38;5;69m', '\x1b[38;5;69m'])
+colors_pool = itertools.cycle(['33m', '33m', '69m', '74m', '74m', '73m', '73m', '73m', '78m', '114m', '114m', '113m', '113m', '155m', '155m', '155m', '155m', '155m', '155m', '191m', '191m', '185m', '185m', '185m', '185m', '185m', '185m', '221m', '221m', '221m', '221m', '221m', '215m', '215m', '215m', '209m', '209m', '209m', '203m', '203m', '203m', '204m', '204m', '204m', '198m', '198m', '129m', '129m', '135m', '99m', '99m', '99m', '99m', '63m', '63m', '63m', '63m', '69m', '69m', '69m'])
 
 def cout(input):
-    print('%s%s' % (next(colors_pool), input))
+    print('[\x1b[38;5;%s%s\x1b[0m] %s' % (next(colors_pool), datetime.datetime.now().strftime('%H:%M:%S'), input))
 
 class Main:
     def __init__(self):
@@ -155,13 +155,14 @@ class Main:
                     ids.append(int(user['id']))
         for id in ids:
             time.sleep(1)
-            response = self.session.get('https://discord.com/api/v9/users/%s' % id).json()
-            tag = '%s#%s' % (response['username'], response['discriminator'])
             cout('Started DM/GC backup with: %s (ID: %s)' % (tag, id))
             try:
                 channel_id = self.get_channel(id)
+                response = self.session.get('https://discord.com/api/v9/users/%s' % id).json()
+                tag = '%s#%s' % (response['username'], response['discriminator'])
             except:
                 channel_id = id
+                tag = 'Group Chat'
             pins_list = []
             attachments_list = []
             messages_list = []
@@ -182,6 +183,7 @@ class Main:
                         pins_list.append(content)
                 messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channel_id, messages.json()[-1]['id']))
             with open('%sDMs/%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
+                file.write('Date: %s\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
                 file.write('DMs with: %s (ID: %s)\n\n' % (tag, id))
                 file.write('Statistics: All: %s, Pinned: %s, Attachments: %s\n\n' % (len(messages_list), len(pins_list), len(attachments_list)))
                 file.write('--- PINNED MESSAGE(S) --- (Total: %s)\n\n' % len(pins_list))
