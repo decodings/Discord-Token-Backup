@@ -155,7 +155,6 @@ class Main:
                     ids.append(int(user['id']))
         for id in ids:
             time.sleep(1)
-            cout('Started DM/GC backup with: %s (ID: %s)' % (tag, id))
             try:
                 channel_id = self.get_channel(id)
                 response = self.session.get('https://discord.com/api/v9/users/%s' % id).json()
@@ -163,6 +162,7 @@ class Main:
             except:
                 channel_id = id
                 tag = 'Group Chat'
+            cout('Started DM/GC backup with: %s (ID: %s)' % (tag, id))
             pins_list = []
             attachments_list = []
             messages_list = []
