@@ -56,7 +56,7 @@ class Main:
                 cout('Saved note for: %s' % tag)
             elif response.status_code == 429:
                 retry_after = response.json()['retry_after']
-                cout('Rate limited, sleeping for: %s' % retry_after)
+                cout('Rate limited, sleeping for: %s' % retry_after + 1)
                 time.sleep(retry_after + 1)
                 response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
                 if response:
@@ -92,7 +92,7 @@ class Main:
                         file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
                 else:
                     retry_after = response.json()['retry_after']
-                    cout('Rate limmited, sleeping for: %s' % retry_after)
+                    cout('Rate limmited, sleeping for: %s' % retry_after + 1)
                     time.sleep(retry_after + 1)
                     invite = response.json()['code']
                     recipients = []
@@ -126,7 +126,7 @@ class Main:
                             time.sleep(1)
                             break
                         elif response.status_code == 429:
-                            cout('Rate limited, sleeping for: %s seconds.' % response.json()['retry_after'])
+                            cout('Rate limited, sleeping for: %s seconds.' % response.json()['retry_after'] + 1)
                             time.sleep(response.json()['retry_after'] + 1)
                             response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                             if response.status_code == 200:
