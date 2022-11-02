@@ -6,7 +6,7 @@ dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
 
 import requests, time, datetime, itertools
 
-colors_pool = itertools.cycle(['33m', '33m', '69m', '74m', '74m', '73m', '73m', '73m', '78m', '114m', '114m', '113m', '113m', '155m', '155m', '155m', '155m', '155m', '155m', '191m', '191m', '185m', '185m', '185m', '185m', '185m', '185m', '221m', '221m', '221m', '221m', '221m', '215m', '215m', '215m', '209m', '209m', '209m', '203m', '203m', '203m', '204m', '204m', '204m', '198m', '198m', '129m', '129m', '135m', '99m', '99m', '99m', '99m', '63m', '63m', '63m', '63m', '69m', '69m', '69m'])
+colors_pool = itertools.cycle(['27m', '33m', '69m', '74m', '74m', '73m', '73m', '73m', '78m', '114m', '114m', '113m', '113m', '155m', '155m', '155m', '155m', '155m', '155m', '191m', '191m', '185m', '185m', '185m', '185m', '185m', '185m', '221m', '221m', '221m', '221m', '221m', '215m', '215m', '215m', '209m', '209m', '209m', '203m', '203m', '203m', '204m', '204m', '204m', '198m', '198m', '129m', '129m', '135m', '99m', '99m', '99m', '99m', '63m', '63m', '63m', '63m', '69m', '69m', '69m'])
 
 def cout(input):
     print('[\x1b[38;5;%s%s\x1b[0m] %s' % (next(colors_pool), datetime.datetime.now().strftime('%H:%M:%S'), input))
