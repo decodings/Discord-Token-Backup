@@ -122,7 +122,7 @@ class Main:
                         response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                         if response.status_code == 200:
                             invite = response.json()['code']
-                            cout('Created invite for: %s | %s.' % (guild['name'], invite))
+                            cout('Created invite for: %s | %s' % (guild['name'], invite))
                             time.sleep(1)
                             break
                         elif response.status_code == 429:
@@ -131,16 +131,16 @@ class Main:
                             response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                             if response.status_code == 200:
                                 invite = response.json()['code']
-                                cout('Created invite for: %s | %s.' % (guild['name'], invite))
+                                cout('Created invite for: %s | %s' % (guild['name'], invite))
                                 time.sleep(1)
                                 break
                             else:
                                 invite = 'None'
-                                cout('Couldn\'t create invite for: %s.' % guild['name'])
+                                cout('Couldn\'t create invite for: %s' % guild['name'])
                                 time.sleep(1)
                         else:
                             invite = 'None'
-                            cout('Couldn\'t create invite for: %s.' % guild['name'])
+                            cout('Couldn\'t create invite for: %s' % guild['name'])
                             time.sleep(1)
             with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
                 file.write('%s | %s | %s\n' % (guild['name'], guild['id'], invite))
