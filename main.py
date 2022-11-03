@@ -1,8 +1,10 @@
-token = '' # Your account's token
+token = '' # Your account's token.
 backup_dms = False # False/True
 dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with. (Leave blank to backup all friends.)
 
 #
+
+backup_full_json = False # Backups full json capture for DM/GC backup (Uses 10x more space.), if you don't know what this is, don't touch it.
 
 import requests, time, datetime, itertools
 
@@ -172,9 +174,12 @@ class Main:
             pins_list = []
             attachments_list = []
             messages_list = []
+            full_capture = []
             messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?limit=100' % channel_id)
             while len(messages.json()) > 0:
                 for message in messages.json():
+                    if backup_full_json:
+                        full_capture.append(message)
                     date = datetime.datetime.fromisoformat(message['timestamp']).strftime('%Y-%m-%d | %H:%M %p')
                     if message['attachments']:
                         _attachments_list = []
@@ -201,6 +206,10 @@ class Main:
                 file.write('\n--- ALL MESSAGE(S) --- (Total: %s)\n\n' % len(messages_list))
                 for message in messages_list:
                     file.write('%s\n' % message)
+            if backup_full_json:
+                with open('%sDMs/c%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
+                    for capture in full_capture:
+                        file.write('%s\n' % capture)
             cout('Backed up %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
 
     def run(self):
