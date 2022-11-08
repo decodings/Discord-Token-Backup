@@ -210,7 +210,7 @@ class Main:
                 with open('%sDMs/c%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
                     for capture in full_capture:
                         file.write('%s\n' % capture)
-            cout('Backed up %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
+            cout('Backuped %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
 
     def run(self):
         self.backup_relationships()
