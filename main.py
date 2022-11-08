@@ -4,14 +4,14 @@ dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with.
 
 #
 
-backup_full_json = False # Backups full json capture for DM/GC backup (Uses 10x more space.), if you don't know what this is, don't touch it.
+backup_full_json = False # Backups full json capture for DM/GC message backup (Uses 10x more space.), if you don't know what this is, don't touch it.
 
 import requests, time, datetime, itertools
 
-colors_pool = itertools.cycle(['27m', '33m', '69m', '74m', '74m', '73m', '73m', '73m', '78m', '114m', '114m', '113m', '113m', '155m', '155m', '155m', '155m', '155m', '155m', '191m', '191m', '185m', '185m', '185m', '185m', '185m', '185m', '221m', '221m', '221m', '221m', '221m', '215m', '215m', '215m', '209m', '209m', '209m', '203m', '203m', '203m', '204m', '204m', '204m', '198m', '198m', '129m', '129m', '135m', '99m', '99m', '99m', '99m', '63m', '63m', '63m', '63m', '69m', '69m', '69m'])
+colors_pool = itertools.cycle([27, 33, 69, 74, 74, 73, 73, 73, 78, 114, 114, 113, 113, 155, 155, 155, 155, 155, 155, 191, 191, 185, 185, 185, 185, 185, 185, 221, 221, 221, 221, 221, 215, 215, 215, 209, 209, 209, 203, 203, 203, 204, 204, 204, 198, 198, 129, 129, 135, 99, 99, 99, 99, 63, 63, 63, 63, 69, 69, 69])
 
 def cout(input):
-    print('[\x1b[38;5;%s%s\x1b[0m] %s' % (next(colors_pool), datetime.datetime.now().strftime('%H:%M:%S'), input))
+    print('[\x1b[38;5;%sm%s\x1b[0m] %s' % (next(colors_pool), datetime.datetime.now().strftime('%H:%M:%S'), input))
 
 class Main:
     def __init__(self):
