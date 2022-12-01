@@ -117,7 +117,7 @@ class Main:
                     cout('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
         groupCount = len(groupsList)
-        with open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
+        with open('%sgroups.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
             file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
             file.write('Total group chats: %s\n\n' % groupCount)
             for capture in groupsList:
