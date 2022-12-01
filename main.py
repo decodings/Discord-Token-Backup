@@ -79,11 +79,13 @@ class Main:
                 note = 'None'
             usersList.append('%s | Note: %s | %s' % (tag, note.replace('\n', '\\n'), user['id']))
             cout('Saved friend: %s' % tag)
+        userCount = len(usersList)
         with open('%srelationships.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
             file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+            file.write('Total friends: %s\n' % userCount)
             for capture in usersList:
                 file.write('%s\n\n' % capture)
-        cout('Backuped %s friends.\n' % len(usersList))
+        cout('Backuped %s friends.\n' % userCount)
 
     def backupGroupChats(self):
         groupsList = []
@@ -114,11 +116,13 @@ class Main:
                     groupsList.append('Group chat: %s | %s | %s' % (recipients, channel['id'], invite))
                     cout('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
+        groupCount = len(groupsList)
         with open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
             file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+            file.write('Total group chats: %s\n' % groupCount)
             for capture in groupsList:
                 file.write('%s\n\n' % capture)
-        cout('Backuped %s group chats.\n' % len(groupsList))
+        cout('Backuped %s group chats.\n' % groupCount)
 
     def backupGuilds(self):
         guildsList = []
@@ -159,11 +163,13 @@ class Main:
                             cout('Couldn\'t create invite for: %s' % guild['name'])
                             time.sleep(1)
             guildsList.append('%s | %s | %s' % (guild['name'], guild['id'], invite))
+        guildCount = len(guildsList)
         with open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
             file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+            file.write('Total guilds: %s\n' % guildCount)
             for capture in guildsList:
                 file.write('%s\n\n' % capture)
-        cout('Backuped %s guilds.\n' % len(guildsList))
+        cout('Backuped %s guilds.\n' % guildCount)
 
     def getChannel(self, userId):
         json = {
