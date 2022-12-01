@@ -82,7 +82,7 @@ class Main:
         userCount = len(usersList)
         with open('%srelationships.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
             file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
-            file.write('Total friends: %s\n' % userCount)
+            file.write('Total friends: %s\n\n' % userCount)
             for capture in usersList:
                 file.write('%s\n\n' % capture)
         cout('Backuped %s friends.\n' % userCount)
@@ -119,7 +119,7 @@ class Main:
         groupCount = len(groupsList)
         with open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
             file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
-            file.write('Total group chats: %s\n' % groupCount)
+            file.write('Total group chats: %s\n\n' % groupCount)
             for capture in groupsList:
                 file.write('%s\n\n' % capture)
         cout('Backuped %s group chats.\n' % groupCount)
@@ -166,7 +166,7 @@ class Main:
         guildCount = len(guildsList)
         with open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
             file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
-            file.write('Total guilds: %s\n' % guildCount)
+            file.write('Total guilds: %s\n\n' % guildCount)
             for capture in guildsList:
                 file.write('%s\n\n' % capture)
         cout('Backuped %s guilds.\n' % guildCount)
