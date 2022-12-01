@@ -1,37 +1,50 @@
-token = '' # Your account's token.
-backup_dms = False # False/True
-dm_backup_whitelist = [] # IDs/Group Chats of users you want to backup DMs with. (Leave blank to backup all friends.)
+'''
+USAGE:
+Create a folder called `DMs`.
+Set `token` to your account's token.
+To backup group chat history put the group chat's ID in `dmBackupWhitelist`.
+Leave `dmBackupWhitelist` blank to backup all DMs with your friends. (Excluding group chats.)
+If you set `backupFullJson` to `True`, it will backup full message capture. (Don't touch this if you didn't understand.)
+'''
+
+token = ''
+
+backupDms = True
+dmBackupWhitelist = []
+backupFullJson = False
+
+backupGuilds = True
+backupGroupChats = True
+backupFriends = True
 
 #
 
-backup_full_json = False # Backups full json capture for DM/GC message backup (Uses 10x more space.), if you don't know what this is, don't touch it.
-
 import requests, time, datetime, itertools
 
-colors_pool = itertools.cycle([27, 33, 69, 74, 74, 73, 73, 73, 78, 114, 114, 113, 113, 155, 155, 155, 155, 155, 155, 191, 191, 185, 185, 185, 185, 185, 185, 221, 221, 221, 221, 221, 215, 215, 215, 209, 209, 209, 203, 203, 203, 204, 204, 204, 198, 198, 129, 129, 135, 99, 99, 99, 99, 63, 63, 63, 63, 69, 69, 69])
+colorsPool = itertools.cycle([27, 33, 69, 74, 74, 73, 73, 73, 78, 114, 114, 113, 113, 155, 155, 155, 155, 155, 155, 191, 191, 185, 185, 185, 185, 185, 185, 221, 221, 221, 221, 221, 215, 215, 215, 209, 209, 209, 203, 203, 203, 204, 204, 204, 198, 198, 129, 129, 135, 99, 99, 99, 99, 63, 63, 63, 63, 69, 69, 69])
 
 def cout(input):
-    print('[\x1b[38;5;%sm%s\x1b[0m] %s' % (next(colors_pool), datetime.datetime.now().strftime('%H:%M:%S'), input))
+    print('[\x1b[38;5;%sm%s\x1b[0m] %s' % (next(colorsPool), datetime.datetime.now().strftime('%H:%M:%S'), input))
 
 class Main:
     def __init__(self):
         self.token = token
-        self.session = self.create_session()
-        self.path = '' # For VSC users that use folders (Ex: Folder/)
-        self.dm_backup_whitelist = dm_backup_whitelist
+        self.session = self.createSession()
+        self.path = '' # For VSC users that use folders. (Example: Folder/)
+        self.dmBackupWhitelist = dmBackupWhitelist
 
-    def get_cookie(self):
+    def getCookie(self):
         cookie = str(requests.get('https://discord.com/app').cookies)
         return cookie.split('dcfduid=')[1].split(' ')[0], cookie.split('sdcfduid=')[1].split(' ')[0], cookie.split('cfruid=')[1].split(' ')[0]
 
-    def create_session(self):
+    def createSession(self):
         session = requests.Session()
         session.headers.update({
             'accept': '*/*',
             'accept-encoding': 'application/json',
             'accept-language': 'en-US,en;q=0.8',
             'authorization': self.token,
-            'cookie': '__dcfduid=%s; __sdcfduid=%s; __cfruid=%s' % self.get_cookie(),
+            'cookie': '__dcfduid=%s; __sdcfduid=%s; __cfruid=%s' % self.getCookie(),
             'referer': 'https://discord.com/channels/@me',
             'sec-fetch-dest': 'empty',
             'sec-fetch-mode': 'cors',
@@ -44,22 +57,18 @@ class Main:
         })
         return session
 
-    def backup_relationships(self):
-        open('%srelationships.txt' % self.path, 'w+', encoding = 'UTF-8').close()
-        with open('%srelationships.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
-            file.write('Date: %s\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+    def backupRelationships(self):
+        usersList = []
         for user in self.session.get('https://discord.com/api/v9/users/@me/relationships').json():
-            username = user['user']['username']
-            discriminator = user['user']['discriminator']
-            tag = '%s#%s' % (username, discriminator)
+            tag = '%s#%s' % (user['user']['username'], user['user']['discriminator'])
             response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
             if response:
                 note = response.json()['note']
                 cout('Saved note for: %s' % tag)
             elif response.status_code == 429:
-                retry_after = response.json()['retry_after']
-                cout('Rate limited, sleeping for: %s' % (retry_after + 1))
-                time.sleep(retry_after + 1)
+                retryAfter = response.json()['retry_after']
+                cout('Rate limited, sleeping for: %ss' % (retryAfter + 1))
+                time.sleep(retryAfter + 1)
                 response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
                 if response:
                     note = response.json()['note']
@@ -68,14 +77,16 @@ class Main:
                     note = 'None'
             else:
                 note = 'None'
-            with open('%srelationships.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
-                file.write('%s | Note: %s | %s\n' % (tag, note.replace('\n', '\\n'), user['id']))
-                cout('Saved friend: %s' % tag)
+            usersList.append('%s | Note: %s | %s' % (tag, note.replace('\n', '\\n'), user['id']))
+            cout('Saved friend: %s' % tag)
+        with open('%srelationships.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
+            file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+            for capture in usersList:
+                file.write('%s\n\n' % capture)
+        cout('Backuped %s friends.\n' % len(usersList))
 
-    def backup_group_chats(self):
-        open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8').close()
-        with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
-            file.write('Date: %s\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+    def backupGroupChats(self):
+        groupsList = []
         for channel in self.session.get('https://discord.com/api/v9/users/@me/channels').json():
             if channel['type'] == 3:
                 json = {
@@ -86,28 +97,31 @@ class Main:
                     invite = response.json()['code']
                     recipients = []
                     for user in channel['recipients']:
-                        recipients.append(user['username'])
+                        recipients.append('%s#%s' % (user['username'], user['discriminator']))
                     recipients = ', '.join(recipients)
+                    groupsList.append('Group chat: %s | %s | %s' % (recipients, channel['id'], invite))
                     cout('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
-                    with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
-                        file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
                 else:
-                    retry_after = response.json()['retry_after']
-                    cout('Rate limmited, sleeping for: %s' % (retry_after + 1))
-                    time.sleep(retry_after + 1)
+                    retryAfter = response.json()['retry_after']
+                    cout('Rate limmited, Sleeping for: %ss' % (retryAfter + 1))
+                    time.sleep(retryAfter + 1)
                     invite = response.json()['code']
                     recipients = []
                     for user in channel['recipients']:
-                        recipients.append(user['username'])
+                        recipients.append('%s#%s' % (user['username'], user['discriminator']))
                     recipients = ', '.join(recipients)
+                    groupsList.append('Group chat: %s | %s | %s' % (recipients, channel['id'], invite))
                     cout('Created invite for group chat: %s | %s' % (recipients, invite))
                     time.sleep(1)
-                    with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
-                        file.write('Group chat: %s | %s | %s\n' % (recipients, channel['id'], invite))
+        with open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
+            file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+            for capture in groupsList:
+                file.write('%s\n\n' % capture)
+        cout('Backuped %s group chats.\n' % len(groupsList))
 
-    def backup_guilds(self):
-        allowed_channel_types = [0, 2, 3, 5, 13]
+    def backupGuilds(self):
+        guildsList = []
         for guild in self.session.get('https://discord.com/api/v9/users/@me/guilds').json():
             if 'VANITY_URL' in guild['features']:
                 invite = self.session.get('https://discord.com/api/v9/guilds/%s' % guild['id']).json()['vanity_url_code']
@@ -115,7 +129,7 @@ class Main:
                 time.sleep(1)
             else:
                 for channel in self.session.get('https://discord.com/api/v9/guilds/%s/channels' % guild['id']).json():
-                    if channel['type'] in allowed_channel_types:
+                    if channel['type'] in [0, 2, 3, 5, 13]:
                         json = {
                             'max_age': 0,
                             'max_uses': 0,
@@ -128,7 +142,7 @@ class Main:
                             time.sleep(1)
                             break
                         elif response.status_code == 429:
-                            cout('Rate limited, sleeping for: %s seconds.' % (response.json()['retry_after'] + 1))
+                            cout('Rate limited, sleeping for: %ss seconds.' % (response.json()['retry_after'] + 1))
                             time.sleep(response.json()['retry_after'] + 1)
                             response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                             if response.status_code == 200:
@@ -144,18 +158,22 @@ class Main:
                             invite = 'None'
                             cout('Couldn\'t create invite for: %s' % guild['name'])
                             time.sleep(1)
-            with open('%sguilds.txt' % self.path, 'a+', encoding = 'UTF-8') as file:
-                file.write('%s | %s | %s\n' % (guild['name'], guild['id'], invite))
+            guildsList.append('%s | %s | %s' % (guild['name'], guild['id'], invite))
+        with open('%sguilds.txt' % self.path, 'w+', encoding = 'UTF-8') as file:
+            file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+            for capture in guildsList:
+                file.write('%s\n\n' % capture)
+        cout('Backuped %s guilds.\n' % len(guildsList))
 
-    def get_channel(self, id):
+    def getChannel(self, userId):
         json = {
-            'recipients': [id]
+            'recipients': [userId]
         }
         return self.session.post('https://discord.com/api/v9/users/@me/channels', json = json).json()['id']
 
-    def backup_dms(self):
-        if self.dm_backup_whitelist:
-            ids = self.dm_backup_whitelist
+    def backupDms(self):
+        if self.dmBackupWhitelist:
+            ids = self.dmBackupWhitelist
         else:
             ids = []
             for user in self.session.get('https://discord.com/api/v9/users/@me/relationships').json():
@@ -164,60 +182,63 @@ class Main:
         for id in ids:
             time.sleep(1)
             try:
-                channel_id = self.get_channel(id)
+                channelId = self.getChannel(id)
                 response = self.session.get('https://discord.com/api/v9/users/%s' % id).json()
                 tag = '%s#%s' % (response['username'], response['discriminator'])
             except:
-                channel_id = id
+                channelId = id
                 tag = 'Group Chat'
             cout('Started DM/GC backup with: %s (ID: %s)' % (tag, id))
-            pins_list = []
-            attachments_list = []
-            messages_list = []
-            full_capture = []
-            messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?limit=100' % channel_id)
+            pinsList = []
+            attachmentsList = []
+            messagesList = []
+            fullCapture = []
+            messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?limit=100' % channelId)
             while len(messages.json()) > 0:
                 for message in messages.json():
-                    if backup_full_json:
-                        full_capture.append(message)
+                    if backupFullJson:
+                        fullCapture.append(message)
                     date = datetime.datetime.fromisoformat(message['timestamp']).strftime('%Y-%m-%d | %H:%M %p')
                     if message['attachments']:
-                        _attachments_list = []
                         for attachment in message['attachments']:
-                            attachments_list.append('Attachment name: %s | Attachment URL: %s' % (attachment['filename'], attachment['url']))
-                            _attachments_list.append('Attachment name: %s | Attachment URL: %s' % (attachment['filename'], attachment['url']))
-                        content = '(%s) %s#%s: %s | Attachment(s): %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'], ', '.join(_attachments_list))
+                            attachmentsList.append('Attachment name: %s | Attachment URL: %s' % (attachment['filename'], attachment['url']))
+                        content = '(%s) %s#%s: %s | Attachment(s): %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'], ', '.join(attachmentsList))
                     else:
                         content = '(%s) %s#%s: %s' % (date, message['author']['username'], message['author']['discriminator'], message['content'])
-                    messages_list.append(content)
+                    messagesList.append(content)
                     if message['pinned']:
-                        pins_list.append(content)
-                messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channel_id, messages.json()[-1]['id']))
+                        pinsList.append(content)
+                messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channelId, messages.json()[-1]['id']))
             with open('%sDMs/%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
-                file.write('Date: %s\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
+                file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
                 file.write('DMs with: %s (ID: %s)\n\n' % (tag, id))
-                file.write('Statistics: All: %s, Pinned: %s, Attachments: %s\n\n' % (len(messages_list), len(pins_list), len(attachments_list)))
-                file.write('--- PINNED MESSAGE(S) --- (Total: %s)\n\n' % len(pins_list))
-                for message in pins_list:
+                file.write('Statistics: All: %s, Pinned: %s, Attachments: %s\n\n' % (len(messagesList), len(pinsList), len(attachmentsList)))
+                file.write('--- PINNED MESSAGE(S) --- (Total: %s)\n\n' % len(pinsList))
+                for message in pinsList:
                     file.write('%s\n' % message)
-                file.write('\n--- ATTACHMENT(S) --- (Total: %s)\n\n' % len(attachments_list))
-                for message in attachments_list:
+                file.write('\n--- ATTACHMENT(S) --- (Total: %s)\n\n' % len(attachmentsList))
+                for message in attachmentsList:
                     file.write('%s\n' % message)
-                file.write('\n--- ALL MESSAGE(S) --- (Total: %s)\n\n' % len(messages_list))
-                for message in messages_list:
+                file.write('\n--- ALL MESSAGE(S) --- (Total: %s)\n\n' % len(messagesList))
+                for message in messagesList:
                     file.write('%s\n' % message)
-            if backup_full_json:
+            if backupFullJson:
                 with open('%sDMs/c%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
-                    for capture in full_capture:
+                    for capture in fullCapture:
                         file.write('%s\n' % capture)
-            cout('Backuped %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)' % (len(messages_list), len(pins_list), len(attachments_list), tag, id))
+            cout('Backuped %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)\n' % (len(messagesList), len(pinsList), len(attachmentsList), tag, id))
+        cout('Backuped %s DMs.' % len(ids))
 
     def run(self):
-        self.backup_relationships()
-        if backup_dms:
-            self.backup_dms()
-        self.backup_group_chats()
-        self.backup_guilds()
+        if backupFriends:
+            self.backupRelationships()
+        if backupGroupChats:
+            self.backupGroupChats()
+        if backupGuilds:
+            self.backupGuilds()
+        if backupDms:
+            self.backupDms()
+        cout('Finished token backup.')
 
 if __name__ == '__main__':
     Main().run()
