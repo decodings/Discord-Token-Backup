@@ -19,7 +19,7 @@ backupFriends = True
 
 #
 
-import requests, time, datetime, itertools
+import requests, time, datetime, itertools, pathlib
 
 colorsPool = itertools.cycle([27, 33, 69, 74, 74, 73, 73, 73, 78, 114, 114, 113, 113, 155, 155, 155, 155, 155, 155, 191, 191, 185, 185, 185, 185, 185, 185, 221, 221, 221, 221, 221, 215, 215, 215, 209, 209, 209, 203, 203, 203, 204, 204, 204, 198, 198, 129, 129, 135, 99, 99, 99, 99, 63, 63, 63, 63, 69, 69, 69])
 
@@ -30,7 +30,7 @@ class Main:
     def __init__(self):
         self.token = token
         self.session = self.createSession()
-        self.path = '' # For VSC users that use folders. (Example: Folder/)
+        self.path = '%s/' % str(pathlib.Path(__file__).resolve().parent).replace('\\', '/')
         self.dmBackupWhitelist = dmBackupWhitelist
 
     def getCookie(self):
