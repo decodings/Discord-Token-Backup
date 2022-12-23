@@ -125,7 +125,7 @@ class Main:
             file.write('Total group chats: %s\n\n' % groupCount)
             for capture in groupsList:
                 file.write('%s\n\n' % capture)
-        cout('Backuped %s group chats.\n' % groupCount)
+        cout('Backuped %s group chat(s).\n' % groupCount)
 
     def backupGuilds(self):
         guildsList = []
@@ -172,7 +172,7 @@ class Main:
             file.write('Total guilds: %s\n\n' % guildCount)
             for capture in guildsList:
                 file.write('%s\n\n' % capture)
-        cout('Backuped %s guilds.\n' % guildCount)
+        cout('Backuped %s guild(s).\n' % guildCount)
 
     def getChannel(self, userId):
         json = {
@@ -236,7 +236,7 @@ class Main:
                     for capture in fullCapture:
                         file.write('%s\n' % capture)
             cout('Backuped %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)\n' % (len(messagesList), len(pinsList), len(attachmentsList), tag, id))
-        cout('Backuped %s DMs.' % len(ids))
+        cout('Backuped %s DM(s).' % len(ids))
 
     def run(self):
         if backupFriends:
