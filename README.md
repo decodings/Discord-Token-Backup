@@ -8,7 +8,4 @@
 - [x] Message backup for DMs & group chats (All messages, pins and attachments.) (Average speed: 30 seconds per 10K messages.)
 
 ### Showcase:
-![image](https://user-images.githubusercontent.com/109295864/199516750-d7e42b07-fb68-4db5-ab64-d16057c51c1d.png)
-![image](https://user-images.githubusercontent.com/109295864/199516632-14dc7b93-6c51-452f-89aa-56f4d8a2a44b.png)
-![image](https://user-images.githubusercontent.com/109295864/199516695-a70fe22c-54b6-4821-97d5-3a076522f44a.png)
-![image](https://user-images.githubusercontent.com/109295864/199516405-9d67a788-b31e-4a63-a553-ff0441ff7b7b.png)
+![image](https://user-images.githubusercontent.com/109295864/209398170-f6d57b0d-640f-48ae-b0ea-686250e2e4ee.png)
