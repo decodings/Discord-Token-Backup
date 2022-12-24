@@ -1,7 +1,6 @@
 # USAGE:
 '''
 Create a folder called `DMs`.
-
 config.json:
 Set `token` to your account's token.
 To backup group chat history put the group chat's ID in `dmBackupWhitelist`.
@@ -16,13 +15,12 @@ import requests, time, datetime, itertools, pathlib, json
 # RGB LOGGING
 '''
 colorsPool = itertools.cycle([27, 33, 69, 74, 74, 73, 73, 73, 78, 114, 114, 113, 113, 155, 155, 155, 155, 155, 155, 191, 191, 185, 185, 185, 185, 185, 185, 221, 221, 221, 221, 221, 215, 215, 215, 209, 209, 209, 203, 203, 203, 204, 204, 204, 198, 198, 129, 129, 135, 99, 99, 99, 99, 63, 63, 63, 63, 69, 69, 69])
-
 def cout(input):
     print('[\x1b[38;5;%sm%s\x1b[0m] %s' % (next(colorsPool), datetime.datetime.now().strftime('%H:%M:%S'), input))
 '''
 
-config = json.load(open('config.json'))
-
+path = '%s/' % str(pathlib.Path(__file__).resolve().parent).replace('\\', '/')
+config = json.load(open('%sconfig.json' % path))
 backupFullJson = config['backupFullJson']
 
 def cout(input):
@@ -32,7 +30,7 @@ class Main:
     def __init__(self):
         self.token = config['token']
         self.session = self.createSession()
-        self.path = '%s/' % str(pathlib.Path(__file__).resolve().parent).replace('\\', '/')
+        self.path = path
         self.dmBackupWhitelist = config['dmBackupWhitelist']
 
     def getCookie(self):
