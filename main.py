@@ -1,40 +1,39 @@
+# USAGE:
 '''
-USAGE:
 Create a folder called `DMs`.
+
+config.json:
 Set `token` to your account's token.
 To backup group chat history put the group chat's ID in `dmBackupWhitelist`.
 Leave `dmBackupWhitelist` blank to backup all DMs with your friends. (Excluding group chats.)
-If you set `backupFullJson` to `True`, it will backup full message capture. (Don't touch this if you didn't understand.)
+If you set `backupFullJson` to `true`, it will backup full message JSON. (Don't touch this if you didn't understand.)
 '''
-
-token = ''
-
-backupDms = True
-dmBackupWhitelist = []
-backupFullJson = False
-
-backupGuilds = True
-backupGroupChats = True
-backupFriends = True
 
 #
 
-import requests, time, datetime, itertools, pathlib
+import requests, time, datetime, itertools, pathlib, json
 
-# colorsPool = itertools.cycle([27, 33, 69, 74, 74, 73, 73, 73, 78, 114, 114, 113, 113, 155, 155, 155, 155, 155, 155, 191, 191, 185, 185, 185, 185, 185, 185, 221, 221, 221, 221, 221, 215, 215, 215, 209, 209, 209, 203, 203, 203, 204, 204, 204, 198, 198, 129, 129, 135, 99, 99, 99, 99, 63, 63, 63, 63, 69, 69, 69])
+# RGB LOGGING
+'''
+colorsPool = itertools.cycle([27, 33, 69, 74, 74, 73, 73, 73, 78, 114, 114, 113, 113, 155, 155, 155, 155, 155, 155, 191, 191, 185, 185, 185, 185, 185, 185, 221, 221, 221, 221, 221, 215, 215, 215, 209, 209, 209, 203, 203, 203, 204, 204, 204, 198, 198, 129, 129, 135, 99, 99, 99, 99, 63, 63, 63, 63, 69, 69, 69])
 
-# def cout(input):
-#     print('[\x1b[38;5;%sm%s\x1b[0m] %s' % (next(colorsPool), datetime.datetime.now().strftime('%H:%M:%S'), input))
+def cout(input):
+    print('[\x1b[38;5;%sm%s\x1b[0m] %s' % (next(colorsPool), datetime.datetime.now().strftime('%H:%M:%S'), input))
+'''
+
+config = json.load(open('config.json'))
+
+backupFullJson = config['backupFullJson']
 
 def cout(input):
     print('[\x1b[38;5;45m%s\x1b[0m] >> %s' % (datetime.datetime.now().strftime('%H:%M:%S'), input))
 
 class Main:
     def __init__(self):
-        self.token = token
+        self.token = config['token']
         self.session = self.createSession()
         self.path = '%s/' % str(pathlib.Path(__file__).resolve().parent).replace('\\', '/')
-        self.dmBackupWhitelist = dmBackupWhitelist
+        self.dmBackupWhitelist = config['dmBackupWhitelist']
 
     def getCookie(self):
         cookie = str(requests.get('https://discord.com/app').cookies)
@@ -241,13 +240,13 @@ class Main:
         cout('Backuped %s DM(s).' % len(ids))
 
     def run(self):
-        if backupFriends:
+        if config['backupFriends']:
             self.backupRelationships()
-        if backupGroupChats:
+        if config['backupGroupChats']:
             self.backupGroupChats()
-        if backupGuilds:
+        if config['backupGuilds']:
             self.backupGuilds()
-        if backupDms:
+        if config['backupDms']:
             self.backupDms()
         cout('Finished token backup.')
 
