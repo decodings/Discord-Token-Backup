@@ -194,10 +194,12 @@ class Main:
                 channelId = self.getChannel(id)
                 response = self.session.get('https://discord.com/api/v9/users/%s' % id).json()
                 tag = '%s#%s' % (response['username'], response['discriminator'])
+                backupType = 'DM'
             except:
                 channelId = id
                 tag = 'Group Chat'
-            cout('Started DM/GC backup with: %s (ID: %s)' % (tag, id))
+                backupType = 'GC'
+            cout('Started %s backup with: %s (ID: %s)' % (backupType, tag, id))
             pinsList = []
             attachmentsList = []
             messagesList = []
