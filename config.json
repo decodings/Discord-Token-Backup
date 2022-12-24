@@ -1,0 +1,11 @@
+{
+    "token": "",
+
+    "backupDms": true,
+    "dmBackupWhitelist": [],
+    "backupFullJson": false,
+
+    "backupGuilds": true,
+    "backupGroupChats": true,
+    "backupFriends": true
+}
