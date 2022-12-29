@@ -1,7 +1,9 @@
 # USAGE:
 '''
-config.json:
+token.json:
 Set `token` to your account's token.
+
+config.json:
 To backup group chat history put the group chat's ID in `dmBackupWhitelist`.
 Leave `dmBackupWhitelist` blank to backup all DMs with your friends. (Excluding group chats.)
 If you set `backupFullJson` to `true`, it will backup full message JSON. (Don't touch this if you didn't understand.)
@@ -19,7 +21,7 @@ def cout(input):
 '''
 
 path = '%s/' % str(pathlib.Path(__file__).resolve().parent).replace('\\', '/')
-config = json.load(open('%s/Data/config.json' % path))
+config = json.load(open('%s/config.json' % path))
 backupFullJson = config['backupFullJson']
 
 def cout(input):
@@ -27,7 +29,7 @@ def cout(input):
 
 class Main:
     def __init__(self):
-        self.token = config['token']
+        self.token = json.load(open('%s/Data/token.json' % path)['token'])
         self.session = self.createSession()
         self.path = path
         self.dmBackupWhitelist = config['dmBackupWhitelist']
