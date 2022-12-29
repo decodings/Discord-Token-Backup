@@ -1,6 +1,4 @@
 {
-    "token": "",
-
     "backupDms": true,
     "dmBackupWhitelist": [],
     "backupFullJson": false,
