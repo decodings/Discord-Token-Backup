@@ -29,7 +29,7 @@ def cout(input):
 
 class Main:
     def __init__(self):
-        self.token = json.load(open('%s/Data/token.json' % path)['token'])
+        self.token = json.load(open('%s/Data/token.json' % path))['token']
         self.session = self.createSession()
         self.path = path
         self.dmBackupWhitelist = config['dmBackupWhitelist']
