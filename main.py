@@ -86,7 +86,7 @@ class Main:
             file.write('Total friends: %s\n\n' % userCount)
             for capture in usersList:
                 file.write('%s\n\n' % capture)
-        cout('Backuped %s friends.\n' % userCount)
+        cout('Backuped %s friend(s).\n' % userCount)
 
     def backupGroupChats(self):
         groupsList = []
@@ -247,7 +247,7 @@ class Main:
             self.backupGuilds()
         if config['backupDms']:
             self.backupDms()
-        cout('Finished token backup.')
+        cout('\nFinished token backup.')
 
 if __name__ == '__main__':
     Main().run()
