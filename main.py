@@ -247,7 +247,8 @@ class Main:
             self.backupGuilds()
         if config['backupDms']:
             self.backupDms()
-        cout('\nFinished token backup.')
+        print()
+        cout('Finished token backup.')
 
 if __name__ == '__main__':
     Main().run()
