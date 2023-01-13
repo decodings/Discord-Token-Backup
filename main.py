@@ -1,4 +1,5 @@
 # USAGE:
+
 '''
 token.json:
 Set `token` to your account's token.
@@ -9,9 +10,20 @@ Leave `dmBackupWhitelist` blank to backup all DMs with your friends. (Excluding 
 If you set `backupFullJson` to `true`, it will backup full message JSON. (Don't touch this if you didn't understand.)
 '''
 
+
+
+
+
+
+
+
+
 #
 
 import requests, time, datetime, itertools, pathlib, json
+
+def cout(input):
+    print('[\x1b[38;5;45m%s\x1b[0m] >> %s' % (datetime.datetime.now().strftime('%H:%M:%S'), input))
 
 # RGB LOGGING
 '''
@@ -23,9 +35,6 @@ def cout(input):
 path = '%s/' % str(pathlib.Path(__file__).resolve().parent).replace('\\', '/')
 config = json.load(open('%s/config.json' % path))
 backupFullJson = config['backupFullJson']
-
-def cout(input):
-    print('[\x1b[38;5;45m%s\x1b[0m] >> %s' % (datetime.datetime.now().strftime('%H:%M:%S'), input))
 
 class Main:
     def __init__(self):
