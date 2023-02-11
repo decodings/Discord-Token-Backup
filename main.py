@@ -217,13 +217,13 @@ class Main:
             messagesList = []
             fullCaptures = []
             messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?limit=100' % channelId)
-            try:
-                msgAmount = self.session.get('https://discord.com/api/v9/channels/%s/messages/search?channel_id=%s' % (channelId, channelId)).json()['total_results']
-            except:
-                msgAmount = 0
+            #try:
+            #    msgAmount = self.session.get('https://discord.com/api/v9/channels/%s/messages/search?channel_id=%s' % (channelId, channelId)).json()['total_results']
+            #except:
+            #    msgAmount = 0
             while len(messages.json()) > 0:
-                sys.stdout.write('\r[\x1b[38;5;45m%s\x1b[0m] Scraped \x1b[38;5;45m>>\x1b[0m %s/%s messages' % (datetime.datetime.now().strftime('%H:%M:%S'), len(messagesList), msgAmount))
-                sys.stdout.flush()
+                #sys.stdout.write('\r[\x1b[38;5;45m%s\x1b[0m] Scraped \x1b[38;5;45m>>\x1b[0m %s/%s messages' % (datetime.datetime.now().strftime('%H:%M:%S'), len(messagesList), msgAmount))
+                #sys.stdout.flush()
                 for message in messages.json():
                     if backupFullJson:
                         fullCaptures.append(message)
@@ -240,10 +240,10 @@ class Main:
                     if message['pinned']:
                         pinsList.append(content)
                 messages = self.session.get('https://discord.com/api/v9/channels/%s/messages?before=%s&limit=100' % (channelId, messages.json()[-1]['id']))
-            sys.stdout.write('\r[\x1b[38;5;45m%s\x1b[0m] Scraped \x1b[38;5;45m>>\x1b[0m %s/%s messages' % (datetime.datetime.now().strftime('%H:%M:%S'), len(messagesList), msgAmount))
-            sys.stdout.flush()
-            print()
-            print()
+            #sys.stdout.write('\r[\x1b[38;5;45m%s\x1b[0m] Scraped \x1b[38;5;45m>>\x1b[0m %s/%s messages' % (datetime.datetime.now().strftime('%H:%M:%S'), len(messagesList), msgAmount))
+            #sys.stdout.flush()
+            #print()
+            #print()
             with open('%s/Data/DMs/%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
                 file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
                 file.write('DMs with: %s (ID: %s)\n\n' % (tag, id))
