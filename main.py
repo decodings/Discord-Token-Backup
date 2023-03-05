@@ -29,7 +29,7 @@ def cout(input):
 
 # Version check
 
-fileVersion = '2.1.4'
+fileVersion = '2.1.5'
 latestVersion = requests.get('https://github.com/decodings/Discord-Token-Backup/blob/main/version.txt').text.split('<td id="LC3" class="blob-code blob-code-inner js-file-line">')[1].split('<')[0]
 
 if fileVersion == latestVersion:
