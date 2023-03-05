@@ -205,11 +205,14 @@ class Main:
             try:
                 channelId = self.getChannel(id)
                 response = self.session.get('https://discord.com/api/v9/users/%s' % id).json()
-                tag = '%s#%s' % (response['username'], response['discriminator'])
+                username = response['username']
+                tag = '%s#%s' % (username, response['discriminator'])
+                fileName = username[:5].lower()
                 backupType = 'DM'
             except:
                 channelId = id
                 tag = 'Group Chat'
+                fileName = 'gc'
                 backupType = 'GC'
             cout('Started %s backup with: %s (ID: %s)' % (backupType, tag, id))
             pinsList = []
@@ -248,7 +251,7 @@ class Main:
             sys.stdout.flush()
             print()
             print()
-            with open('%s/Data/DMs/%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
+            with open('%s/Data/DMs/%s-%s.txt' % (self.path, fileName, id), 'w+', encoding = 'UTF-8') as file:
                 file.write('Date: %s\n\n' % datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S %p %Z'))
                 file.write('DMs with: %s (ID: %s)\n\n' % (tag, id))
                 file.write('Statistics: All: %s, Pinned: %s, Attachment(s): %s\n\n' % (len(messagesList), len(pinsList), len(attachmentsList)))
@@ -262,7 +265,7 @@ class Main:
                 for message in messagesList:
                     file.write('%s\n' % message)
             if backupFullJson:
-                with open('%s/Data/DMs/c%s.txt' % (self.path, id), 'w+', encoding = 'UTF-8') as file:
+                with open('%s/Data/DMs/json-%s-%s.txt' % (self.path, fileName, id), 'w+', encoding = 'UTF-8') as file:
                     for capture in fullCaptures:
                         file.write('%s\n' % capture)
             cout('Backuped %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)\n' % (len(messagesList), len(pinsList), len(attachmentsList), tag, id))
