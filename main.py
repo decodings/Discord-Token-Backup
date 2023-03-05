@@ -265,7 +265,7 @@ class Main:
                 for message in messagesList:
                     file.write('%s\n' % message)
             if backupFullJson:
-                with open('%s/Data/DMs/json-%s-%s.txt' % (self.path, fileName, id), 'w+', encoding = 'UTF-8') as file:
+                with open('%s/Data/DMs/JSON/json-%s-%s.txt' % (self.path, fileName, id), 'w+', encoding = 'UTF-8') as file:
                     for capture in fullCaptures:
                         file.write('%s\n' % capture)
             cout('Backuped %s message(s), %s pin(s), %s attachment(s) with: %s (ID: %s)\n' % (len(messagesList), len(pinsList), len(attachmentsList), tag, id))
