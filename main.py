@@ -95,9 +95,7 @@ class Main:
                 note = response.json()['note']
                 cout2('Saved note for', tag)
             elif response.status_code == 429:
-                retryAfter = response.json()['retry_after']
-                cout2('Rate limited, sleeping for', '%ss' % (retryAfter + 1))
-                time.sleep(retryAfter + 1)
+                time.sleep(response.json()['retry_after'] + 1)
                 response = self.session.get('https://discord.com/api/v9/users/@me/notes/%s' % user['id'])
                 if response:
                     note = response.json()['note']
@@ -134,9 +132,7 @@ class Main:
                     cout2('Created invite for group chat', '%s | %s' % (recipients, invite))
                     time.sleep(1)
                 else:
-                    retryAfter = response.json()['retry_after']
-                    cout2('Rate limmited, Sleeping for', '%ss' % (retryAfter + 1))
-                    time.sleep(retryAfter + 1)
+                    time.sleep(response.json()['retry_after'] + 1)
                     invite = response.json()['code']
                     recipients = []
                     for user in channel['recipients']:
@@ -176,7 +172,6 @@ class Main:
                             time.sleep(1)
                             break
                         elif response.status_code == 429:
-                            cout2('Rate limited, sleeping for', '%ss' % (response.json()['retry_after'] + 1))
                             time.sleep(response.json()['retry_after'] + 1)
                             response = self.session.post('https://discord.com/api/v9/channels/%s/invites' % channel['id'], json = json)
                             if response.status_code == 200:
