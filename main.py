@@ -16,18 +16,33 @@ If you set `backupFullJson` to `true`, it will backup full message JSON. (Don't 
 
 
 
-
-
 #
 print()
 
-import requests, time, datetime, itertools, pathlib, json, sys
+import datetime, itertools, pathlib, json, sys, requests, time
 
 def cout2(info, input):
     print('[\x1b[38;5;45m%s\x1b[0m] %s \x1b[38;5;45m>>\x1b[0m \033[1m%s\x1b[0m' % (datetime.datetime.now().strftime('%H:%M:%S'), info, input))
 
 def cout(input):
     print('[\x1b[38;5;45m%s\x1b[0m] \x1b[38;5;45m>>\x1b[0m %s' % (datetime.datetime.now().strftime('%H:%M:%S'), input))
+
+# Version check
+
+fileVersion = '2.1.4'
+latestVersion = requests.get('https://github.com/decodings/Discord-Token-Backup/blob/main/version.txt').text.split('<td id="LC3" class="blob-code blob-code-inner js-file-line">')[1].split('<')[0]
+
+if fileVersion == latestVersion:
+    cout2('Version', '%s [\x1b[38;5;40mLATEST\x1b[0m]' % fileVersion)
+    print()
+else:
+    cout2('Version', '%s [\x1b[38;5;196mOUTDATED\x1b[0m]' % fileVersion)
+    print()
+    cout2('Get the latest version here', 'https://github.com/decodings/Discord-Token-Backup')
+    cout('Continuing in 10 seconds.')
+    time.sleep(10)
+
+#
 
 # RGB LOGGING
 '''
