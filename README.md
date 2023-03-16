@@ -8,9 +8,9 @@
 - [x] Message backup for DMs & group chats (All messages, pins and attachments.) (Average speed: 10K messages per 30 seconds.)
 
 ### Soon:
-Save removed guilds, friends, messages in DMs
+- [] Save removed guilds, friends, messages in DMs
 
-Faster backups
+- [] Faster backups
 
 
 ### Showcase:
