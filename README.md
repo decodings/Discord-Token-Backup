@@ -9,6 +9,7 @@
 
 ### Soon:
 Save removed guilds, friends, messages in DMs
+
 Faster backups
 
 
