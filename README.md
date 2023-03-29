@@ -9,7 +9,9 @@
 
 ### Soon:
 Save removed guilds, friends, messages in DMs
+
 save emojis, folders, account settings
+
 Faster backups
 
 
