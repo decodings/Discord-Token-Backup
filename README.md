@@ -8,11 +8,7 @@
 - [x] Message backup for DMs & group chats (All messages, pins and attachments.) (Average speed: 10K messages per 30 seconds.)
 
 ### Soon:
-Save removed guilds, friends, messages in DMs
-
-save emojis, folders, account settings
-
-Faster backups
+gonna try to drop v2 later (backups everything, all settings, ur own notes, bio, avatars etc.) auto restores all that as well including emojis gifs avatars banners
 
 
 ### Showcase:
