@@ -1,10 +1,11 @@
-> Works as of January 26, 2023
+> Works as of May 17, 2023
 
 
 
 ### Soon:
 backups everything, all settings, ur own and friend notes and nicknames, bio, avatar n banner, etc. auto restores all that as well including emojis gifs and a lot more. also faster dm backups (5 dms at once)
-<img width="958" alt="Screenshot 2023-05-17 at 12 17 01 PM" src="https://github.com/decodings/Discord-Token-Backup/assets/109295864/e58fc729-7861-4b00-b739-688373da4876">
+<img width="981" alt="Screenshot 2023-05-17 at 12 29 46 PM" src="https://github.com/decodings/Discord-Token-Backup/assets/109295864/009ea6a4-81e8-40fb-b333-ec75f29729cd">
+
 
 
 
